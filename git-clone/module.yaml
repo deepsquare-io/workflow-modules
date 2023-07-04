@@ -54,6 +54,7 @@ steps:
           cat <<EOF >git-ssh-key
         ${SSH_KEY}
         EOF
+        chmod 600 git-ssh-key
         fi
         if [ -n "${REF}" ]; then
           args+=("--branch" "${REF}")
