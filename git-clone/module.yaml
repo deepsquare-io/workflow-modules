@@ -26,7 +26,6 @@ inputs:
     description: 'Git url of the repository to clone.'
   - key: REF
     description: Git reference (commit or branch)
-    default: main
   - key: SSH_KEY
     description: Use an ssh key (optional).
   - key: BARE
@@ -44,14 +43,26 @@ steps:
       container:
         registry: registry-1.docker.io
         image: alpine/git:latest
+      shell: /bin/bash
       command: |
-        cat << EOF > git-ssh-key
+        #!/bin/bash
+        args=()
+        if [ -n "${SUBMODULES}" ]; then
+          args+=("--recurse-submodules" "${SUBMODULES}")
+        fi
+        if [ -n "${SSH_KEY}" ]; then
+          cat << EOF > git-ssh-key
         ${SSH_KEY}
         EOF
+        fi
+        if [ -n "${REF}" ]; then
+          args+=("--branch" "${REF}")
+        fi
+        if [ "${BARE}" = "true" ]; then
+          args+=("--bare")
+        fi
         GIT_SSH_COMMAND='ssh -i git-ssh-key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone \
           --depth="${DEPTH}" \
-          --branch="${REF}" \
-          --recurse-submodules="${SUBMODULES}" \
-          --bare=${BARE} -- \
+          -- \
           "${REPOSITORY}" "${DEEPSQUARE_INPUT}"
         rm -f git-ssh-key
