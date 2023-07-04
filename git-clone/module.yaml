@@ -1,0 +1,57 @@
+# Permits to run git clone commands.
+#
+# Copyright (C) 2023 DeepSquare Association
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+name: 'git-clone'
+description: 'Git clone'
+minimumResources:
+  tasks: 1
+  cpusPerTask: 1
+  memPerCpu: 100
+  gpusPerTask: 0
+inputs:
+  - key: REPOSITORY
+    description: 'Git url of the repository to clone.'
+  - key: REF
+    description: Git reference (commit or branch)
+    default: main
+  - key: SSH_KEY
+    description: Use an ssh key (optional).
+  - key: BARE
+    description: Boolean (true/false). Will make a bare clone.
+    default: 'false'
+  - key: DEPTH
+    description: Integer. Number of commits to fetch. 0 indicates all history for all branches and tags.
+    default: '1'
+  - key: SUBMODULES
+    description: Path spec. See man git-clone(1). Empty default to pull the submodules.
+    default: ''
+steps:
+  - name: Git clone
+    run:
+      container:
+        registry: registry-1.docker.io
+        image: alpine/git:latest
+      command: |
+        cat << EOF > git-ssh-key
+        ${SSH_KEY}
+        EOF
+        GIT_SSH_COMMAND='ssh -i git-ssh-key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone \
+          --depth="${DEPTH}" \
+          --branch="${REF}" \
+          --recurse-submodules="${SUBMODULES}" \
+          --bare=${BARE} -- \
+          "${REPOSITORY}" "${DEEPSQUARE_INPUT}"
+        rm -f git-ssh-key
