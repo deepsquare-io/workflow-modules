@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 name: 'download'
 description: |
-  Download a file to DEEPSQUARE_INPUT/<output> using aria2c. Supports http/https, ftp, sftp, bittorent and metalink.
+  Download a file to DEEPSQUARE_INPUT/<output> using aria2c. Supports http/https, ftp, sftp, bittorrent and metalink.
 
   If you download a torrent, please do not forget add `--seed-time=0` in the OPTIONS to avoid a job stuck.
 minimumResources:

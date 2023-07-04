@@ -1,0 +1,29 @@
+{
+  "resources": {
+    "tasks": 1,
+    "gpusPerTask": 0,
+    "cpusPerTask": 1,
+    "memPerCpu": 512
+  },
+  "enableLogging": true,
+  "steps": [
+    {
+      "name": "http-download",
+      "use": {
+        "source": "github.com/deepsquare-io/workflow-modules/http-download",
+        "args": [
+          {
+            "key": "URLS",
+            "value": "https://raw.githubusercontent.com/deepsquare-io/workflow-modules/main/LICENSE https://raw.githubusercontent.com/deepsquare-io/workflow-modules/main/README.md"
+          }
+        ]
+      }
+    },
+    {
+      "name": "list",
+      "run": {
+        "command": "find $DEEPSQUARE_INPUT"
+      }
+    }
+  ]
+}
