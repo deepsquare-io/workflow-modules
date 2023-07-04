@@ -47,6 +47,7 @@ steps:
       command: |
         #!/bin/bash
         args=()
+        cd "${DEEPSQUARE_INPUT}"
         CWD="$(pwd)"
         if [ -n "${SUBMODULES}" ]; then
           args+=("--recurse-submodules" "${SUBMODULES}")
@@ -63,11 +64,9 @@ steps:
         if [ "${BARE}" = "true" ]; then
           args+=("--bare")
         fi
-        cd "${DEEPSQUARE_INPUT}"
-        GIT_SSH_COMMAND='ssh -i "${CWD}/git-ssh-key" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone \
+        GIT_SSH_COMMAND="ssh -i '${CWD}/git-ssh-key' -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone \
           --depth="${DEPTH}" \
           "${args[@]}" \
           -- \
           "${REPOSITORY}"
-        cd "${CWD}"
         rm -f "${CWD}/git-ssh-key"
