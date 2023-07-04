@@ -10,7 +10,7 @@
     {
       "name": "create file",
       "run": {
-        "command": "mkdir -p $STORAGE_PATH/stash && touch $STORAGE_PATH/stash/test"
+        "command": "mkdir -p $STORAGE_PATH/stash && echo test > $STORAGE_PATH/stash/test"
       }
     },
     {
@@ -24,7 +24,7 @@
           },
           {
             "key": "FILE",
-            "value": "$STORAGE_PATH/stash/test"
+            "value": "$STORAGE_PATH/stash"
           }
         ]
       }

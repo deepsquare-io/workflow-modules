@@ -43,3 +43,4 @@ steps:
           FILE_PATH="${FILE_PATH}.tar"
         fi
         curl -sS --upload-file "${FILE_PATH}" "${URL}"
+        echo
