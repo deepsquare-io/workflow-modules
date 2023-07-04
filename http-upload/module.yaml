@@ -1,0 +1,45 @@
+# Permits to run upload files to the web.
+#
+# Copyright (C) 2023 DeepSquare Association
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+name: 'http-upload'
+description: |
+  Upload from file to an HTTP server using curl.
+minimumResources:
+  tasks: 1
+  cpusPerTask: 1
+  memPerCpu: 100
+  gpusPerTask: 0
+inputs:
+  - key: FILE
+    description: 'Path to the files to be uploaded. If it is a directory, it will be archived into a .tar. Environment variables and shell functions like ${STORAGE_PATH} or $(pwd) can expand here.'
+  - key: URL
+    description: 'Endpoint of the HTTP server.'
+steps:
+  - name: Upload
+    run:
+      container:
+        registry: registry-1.docker.io
+        image: curlimages/curl:latest
+      shell: /bin/sh
+      command: |
+        set -e
+        cd ${STORAGE_PATH}
+        FILE_PATH="$(eval "${FILE}")"
+        if [ -d "${FILE_PATH}" ]; then
+          tar -cf "${FILE_PATH}.tar" "${FILE_PATH}"
+          FILE_PATH="${FILE_PATH}.tar"
+        fi
+        curl -sS --upload-file "${FILE_PATH}" "${URL}"

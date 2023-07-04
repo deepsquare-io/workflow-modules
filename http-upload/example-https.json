@@ -1,0 +1,33 @@
+{
+  "resources": {
+    "tasks": 1,
+    "gpusPerTask": 0,
+    "cpusPerTask": 1,
+    "memPerCpu": 512
+  },
+  "enableLogging": true,
+  "steps": [
+    {
+      "name": "create file",
+      "run": {
+        "command": "mkdir -p $STORAGE_PATH/stash && touch $STORAGE_PATH/stash/test"
+      }
+    },
+    {
+      "name": "download",
+      "use": {
+        "source": "github.com/deepsquare-io/workflow-modules/http-upload",
+        "args": [
+          {
+            "key": "URL",
+            "value": "https://transfer.sh"
+          },
+          {
+            "key": "FILE",
+            "value": "$STORAGE_PATH/stash/test"
+          }
+        ]
+      }
+    }
+  ]
+}
