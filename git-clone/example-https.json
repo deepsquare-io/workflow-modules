@@ -1,0 +1,29 @@
+{
+  "resources": {
+    "tasks": 1,
+    "gpusPerTask": 0,
+    "cpusPerTask": 1,
+    "memPerCpu": 512
+  },
+  "enableLogging": true,
+  "steps": [
+    {
+      "name": "git-clone",
+      "use": {
+        "source": "github.com/deepsquare-io/workflow-modules/git-clone",
+        "args": [
+          {
+            "key": "REPOSITORY",
+            "value": "https://github.com/deepsquare-io/workflow-modules.git"
+          }
+        ]
+      }
+    },
+    {
+      "name": "list",
+      "run": {
+        "command": "find $DEEPSQUARE_INPUT"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+# Permits to run download files from the web on DeepSquare commands.
+#
+# Copyright (C) 2023 DeepSquare Association
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+name: 'download'
+description: |
+  Download a file to DEEPSQUARE_INPUT/<output> using aria2c. Supports http/https, ftp, sftp, bittorent and metalink.
+
+  If you download a torrent, please do not forget add `--seed-time=0` in the OPTIONS to avoid a job stuck.
+minimumResources:
+  tasks: 1
+  cpusPerTask: 1
+  memPerCpu: 100
+  gpusPerTask: 0
+inputs:
+  - key: URLS
+    description: 'List of URLS splitted by spaces.'
+  - key: OPTIONS
+    description: 'Aria2c options. Will expand into multiple arguments.'
+steps:
+  - name: Download
+    run:
+      container:
+        registry: registry-1.docker.io
+        image: p3terx/aria2-pro:latest
+      shell: /bin/sh
+      command: |
+        cd ${DEEPSQUARE_INPUT}
+        aria2c ${OPTIONS} ${URLS}
