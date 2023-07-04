@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 name: 'git-clone'
-description: 'Git clone'
+description: 'Git clone a git repository to the DEEPSQUARE_INPUT/<repo> directory.'
 minimumResources:
   tasks: 1
   cpusPerTask: 1
@@ -47,14 +47,15 @@ steps:
       command: |
         #!/bin/bash
         args=()
+        CWD="$(pwd)"
         if [ -n "${SUBMODULES}" ]; then
           args+=("--recurse-submodules" "${SUBMODULES}")
         fi
         if [ -n "${SSH_KEY}" ]; then
-          cat <<EOF >git-ssh-key
+          cat <<EOF >"${CWD}/git-ssh-key"
         ${SSH_KEY}
         EOF
-        chmod 600 git-ssh-key
+        chmod 600 "${CWD}/git-ssh-key"
         fi
         if [ -n "${REF}" ]; then
           args+=("--branch" "${REF}")
@@ -63,9 +64,10 @@ steps:
           args+=("--bare")
         fi
         cd "${DEEPSQUARE_INPUT}"
-        GIT_SSH_COMMAND='ssh -i git-ssh-key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone \
+        GIT_SSH_COMMAND='ssh -i "${CWD}/git-ssh-key" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone \
           --depth="${DEPTH}" \
           "${args[@]}" \
           -- \
           "${REPOSITORY}"
-        rm -f git-ssh-key
+        cd "${CWD}"
+        rm -f "${CWD}/git-ssh-key"
