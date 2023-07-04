@@ -8,9 +8,9 @@
   "enableLogging": true,
   "steps": [
     {
-      "name": "http-download",
+      "name": "download",
       "use": {
-        "source": "github.com/deepsquare-io/workflow-modules/http-download",
+        "source": "github.com/deepsquare-io/workflow-modules/download",
         "args": [
           {
             "key": "URLS",
