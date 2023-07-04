@@ -37,7 +37,7 @@ steps:
       command: |
         set -e
         cd ${STORAGE_PATH}
-        FILE_PATH="$(eval "${FILE}")"
+        FILE_PATH="$(eval 'echo "${FILE}"')"
         if [ -d "${FILE_PATH}" ]; then
           tar -cf "${FILE_PATH}.tar" "${FILE_PATH}"
           FILE_PATH="${FILE_PATH}.tar"

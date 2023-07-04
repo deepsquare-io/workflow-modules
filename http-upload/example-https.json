@@ -14,7 +14,7 @@
       }
     },
     {
-      "name": "download",
+      "name": "upload",
       "use": {
         "source": "github.com/deepsquare-io/workflow-modules/http-upload",
         "args": [
