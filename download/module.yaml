@@ -26,7 +26,7 @@ minimumResources:
   gpusPerTask: 0
 inputs:
   - key: URLS
-    description: 'List of URLS splitted by spaces.'
+    description: 'List of URLS separated by newlines.'
   - key: OPTIONS
     description: 'Aria2c options. Will expand into multiple arguments.'
 steps:
@@ -38,4 +38,6 @@ steps:
       shell: /bin/sh
       command: |
         cd ${DEEPSQUARE_INPUT}
-        aria2c ${OPTIONS} ${URLS}
+        aria2c ${OPTIONS} -i - << 'EOF'
+        ${URLS}
+        EOF
