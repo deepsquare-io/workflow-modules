@@ -42,7 +42,7 @@ steps:
     run:
       container:
         registry: registry-1.docker.io
-        image: alpine/git:latest
+        image: bitnami/git:latest
       shell: /bin/bash
       command: |
         #!/bin/bash
@@ -51,7 +51,7 @@ steps:
           args+=("--recurse-submodules" "${SUBMODULES}")
         fi
         if [ -n "${SSH_KEY}" ]; then
-          cat << EOF > git-ssh-key
+          cat <<EOF >git-ssh-key
         ${SSH_KEY}
         EOF
         fi
@@ -63,6 +63,7 @@ steps:
         fi
         GIT_SSH_COMMAND='ssh -i git-ssh-key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' git clone \
           --depth="${DEPTH}" \
+          "${args[@]}" \
           -- \
           "${REPOSITORY}" "${DEEPSQUARE_INPUT}"
         rm -f git-ssh-key
