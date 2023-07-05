@@ -1,0 +1,49 @@
+{
+  "resources": {
+    "tasks": 1,
+    "gpusPerTask": 0,
+    "cpusPerTask": 1,
+    "memPerCpu": 512
+  },
+  "enableLogging": true,
+  "steps": [
+    {
+      "name": "pull",
+      "use": {
+        "source": "github.com/deepsquare-io/workflow-modules/s3-sync",
+        "args": [
+          {
+            "key": "SRC",
+            "value": "s3://osimages/squareos-8.6/vmlinuz-4.18.0-372.19.1.el8_6.x86_64"
+          },
+          {
+            "key": "DEST",
+            "value": "${DEEPSQUARE_INPUT}"
+          },
+          {
+            "key": "S3_ENDPOINT_URL",
+            "value": "https://sos-ch-dk-2.exo.io"
+          },
+          {
+            "key": "AWS_SECRET_ACCESS_KEY",
+            "value": "***"
+          },
+          {
+            "key": "AWS_ACCESS_KEY_ID",
+            "value": "EXO***"
+          },
+          {
+            "key": "OPTIONS",
+            "value": "--delete"
+          }
+        ]
+      }
+    },
+    {
+      "name": "list",
+      "run": {
+        "command": "find $DEEPSQUARE_INPUT"
+      }
+    }
+  ]
+}

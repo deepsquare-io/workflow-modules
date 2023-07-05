@@ -19,7 +19,7 @@ description: 'Git clone a git repository to the DEEPSQUARE_INPUT/<repo> director
 minimumResources:
   tasks: 1
   cpusPerTask: 1
-  memPerCpu: 100
+  memPerCpu: 10
   gpusPerTask: 0
 inputs:
   - key: REPOSITORY
