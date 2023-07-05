@@ -45,7 +45,6 @@ steps:
         image: bitnami/git:latest
       shell: /bin/bash
       command: |
-        #!/bin/bash
         args=()
         cd "${DEEPSQUARE_INPUT}"
         CWD="$(pwd)"
