@@ -1,0 +1,31 @@
+{
+  "resources": {
+    "tasks": 1,
+    "gpusPerTask": 0,
+    "cpusPerTask": 1,
+    "memPerCpu": 512
+  },
+  "enableLogging": true,
+  "steps": [
+    {
+      "name": "cache",
+      "use": {
+        "source": "github.com/deepsquare-io/workflow-modules/cache",
+        "args": [
+          {
+            "key": "CACHED_PATH",
+            "value": "$DEEPSQUARE_INPUT"
+          }
+        ],
+        "steps": [
+          {
+            "name": "test",
+            "run": {
+              "command": "echo test >> $DEEPSQUARE_INPUT/test"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

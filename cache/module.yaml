@@ -32,36 +32,43 @@ inputs:
   - key: DISK
     description: 'Boolean. Can expand to bash variables and commands.'
 steps:
-  - name: Pull from cache
-    run:
-      shell: /bin/sh
-      command: |
-        CACHED_PATH="$(eval "echo \"$CACHED_PATH\"")"
-        KEY_PATH="$(eval "echo \"$KEY\"")"
-        if [ "$DISK" = "true" ]; then
-          CACHE_TMP="$DEEPSQUARE_DISK_TMP/$KEY_PATH/"
-        else
-          CACHE_TMP="$DEEPSQUARE_SHARED_TMP/$KEY_PATH/"
-        fi
+  - name: Cache
+    steps:
+      - name: Pull from cache
+        run:
+          shell: /bin/sh
+          command: |
+            CACHED_PATH="$(eval "echo \"$CACHED_PATH\"")"
+            KEY_PATH="$(eval "echo \"$KEY\"")"
+            if [ "$KEY_PATH" = "" ]; then
+              echo "Key is empty"
+              exit 1
+            fi
+            if [ "$DISK" = "true" ]; then
+              CACHE_TMP="$DEEPSQUARE_DISK_TMP/$KEY_PATH/"
+            else
+              CACHE_TMP="$DEEPSQUARE_SHARED_TMP/$KEY_PATH/"
+            fi
 
-        if [ -d "$CACHE_TMP" ]; then
-          rsync -avP "$CACHE_TMP" "$CACHED_PATH"
-        else
-          echo "There is no cache."
-        fi
+            if [ -d "$CACHE_TMP" ]; then
+              rsync -avP "$CACHE_TMP" "$CACHED_PATH"
+            else
+              echo "There is no cache."
+            fi
 
-  {{- .Step.Use.Steps | toYaml | nindent 2 }}
+      {{- .Step.Use.Steps | toYaml | nindent 6 }}
 
-  - name: Push to cache
-    run:
-      shell: /bin/sh
-      command: |
-        CACHED_PATH="$(eval "echo \"$CACHED_PATH\"")"
-        KEY_PATH="$(eval "echo \"$KEY\"")"
-        if [ "$DISK" = "true" ]; then
-          CACHE_TMP="$DEEPSQUARE_DISK_TMP/$KEY_PATH/"
-        else
-          CACHE_TMP="$DEEPSQUARE_SHARED_TMP/$KEY_PATH/"
-        fi
-        mkdir -p -m700 "$CACHE_TMP"=
-        rsync -avP "$CACHED_PATH" "$CACHE_TMP"
+    finally:
+      - name: Push to cache
+        run:
+          shell: /bin/sh
+          command: |
+            CACHED_PATH="$(eval "echo \"$CACHED_PATH\"")"
+            KEY_PATH="$(eval "echo \"$KEY\"")"
+            if [ "$DISK" = "true" ]; then
+              CACHE_TMP="$DEEPSQUARE_DISK_TMP/$KEY_PATH/"
+            else
+              CACHE_TMP="$DEEPSQUARE_SHARED_TMP/$KEY_PATH/"
+            fi
+            mkdir -p -m700 "$CACHE_TMP"
+            rsync -avP "$CACHED_PATH" "$CACHE_TMP"
