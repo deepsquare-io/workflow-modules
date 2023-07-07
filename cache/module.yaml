@@ -1,0 +1,67 @@
+# Permits to run download files from the web.
+#
+# Copyright (C) 2023 DeepSquare Association
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+name: 'cache'
+description: |
+  Pull from the cache to a "path", then, at the end, store from the "path" to the cache.
+
+  Note: The cache is only stored per-site and per-user.
+minimumResources:
+  tasks: 1
+  cpusPerTask: 1
+  memPerCpu: 10
+  gpusPerTask: 0
+inputs:
+  - key: CACHED_PATH
+    description: 'Where to restore and where to save. Can expand to bash variables and commands.'
+  - key: KEY
+    description: 'Unique string. Can expand to bash variables and commands (which can be used to fetch the hash of a file).'
+  - key: DISK
+    description: 'Boolean. Can expand to bash variables and commands.'
+steps:
+  - name: Pull from cache
+    run:
+      shell: /bin/sh
+      command: |
+        CACHED_PATH="$(eval "echo \"$CACHED_PATH\"")"
+        KEY_PATH="$(eval "echo \"$KEY\"")"
+        if [ "$DISK" = "true" ]; then
+          CACHE_TMP="$DEEPSQUARE_DISK_TMP/$KEY_PATH/"
+        else
+          CACHE_TMP="$DEEPSQUARE_SHARED_TMP/$KEY_PATH/"
+        fi
+
+        if [ -d "$CACHE_TMP" ]; then
+          rsync -avP "$CACHE_TMP" "$CACHED_PATH"
+        else
+          echo "There is no cache."
+        fi
+
+  {{- .Step.Use.Steps | toYaml | nindent 2 }}
+
+  - name: Push to cache
+    run:
+      shell: /bin/sh
+      command: |
+        CACHED_PATH="$(eval "echo \"$CACHED_PATH\"")"
+        KEY_PATH="$(eval "echo \"$KEY\"")"
+        if [ "$DISK" = "true" ]; then
+          CACHE_TMP="$DEEPSQUARE_DISK_TMP/$KEY_PATH/"
+        else
+          CACHE_TMP="$DEEPSQUARE_SHARED_TMP/$KEY_PATH/"
+        fi
+        mkdir -p -m700 "$CACHE_TMP"=
+        rsync -avP "$CACHED_PATH" "$CACHE_TMP"
