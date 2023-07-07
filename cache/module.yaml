@@ -29,6 +29,7 @@ inputs:
     description: 'Where to restore and where to save. Can expand to bash variables and commands.'
   - key: KEY
     description: 'Unique string. Can expand to bash variables and commands (which can be used to fetch the hash of a file).'
+    default: cache
   - key: DISK
     description: 'Boolean. Can expand to bash variables and commands.'
 steps:

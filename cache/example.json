@@ -15,6 +15,10 @@
           {
             "key": "CACHED_PATH",
             "value": "$DEEPSQUARE_INPUT"
+          },
+          {
+            "key": "KEY",
+            "value": "my-cache"
           }
         ],
         "steps": [
