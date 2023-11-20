@@ -1,0 +1,40 @@
+# Open a terminal accessible on the web.
+#
+# Copyright (C) 2023 DeepSquare Association
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+name: 'tty2web'
+description: |
+  Open a terminal accessible on the web.
+
+  tty2web is stored inside $STORAGE_PATH.
+minimumResources:
+  tasks: 1
+  cpusPerTask: 1
+  memPerCpu: 10
+  gpusPerTask: 0
+inputs:
+  - key: VERSION
+    description: 'tty2web version'
+    default: v3.0.3
+steps:
+  - name: 'setup-tty2web'
+    run:
+      container:
+        image: curlimages/curl:latest
+        registry: registry-1.docker.io
+      shell: /bin/sh
+      command: |
+        curl -fsSL -o "$STORAGE_PATH/tty2web" "https://github.com/kost/tty2web/releases/download/$VERSION/tty2web_linux_amd64"
+        chmod +x "$STORAGE_PATH/tty2web"
