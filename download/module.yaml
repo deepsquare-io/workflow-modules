@@ -23,7 +23,7 @@ minimumResources:
   tasks: 1
   cpusPerTask: 1
   memPerCpu: 10
-  gpusPerTask: 0
+  gpus: 0
 inputs:
   - key: URLS
     description: 'List of URLS separated by newlines.'

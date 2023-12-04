@@ -1,7 +1,7 @@
 ---
 resources:
   tasks: 1
-  gpusPerTask: 0
+  gpus: 0
   cpusPerTask: 1
   memPerCpu: 512
 enableLogging: true

@@ -21,7 +21,7 @@ minimumResources:
   tasks: 1
   cpusPerTask: 1
   memPerCpu: 10
-  gpusPerTask: 0
+  gpus: 0
 inputs:
   - key: FILE
     description: 'Path to the files to be uploaded. If it is a directory, it will be archived into a .tar. Environment variables and shell functions like ${STORAGE_PATH} or $(pwd) can expand here.'

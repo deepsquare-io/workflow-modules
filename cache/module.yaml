@@ -23,7 +23,7 @@ minimumResources:
   tasks: 1
   cpusPerTask: 1
   memPerCpu: 10
-  gpusPerTask: 0
+  gpus: 0
 inputs:
   - key: CACHED_PATH
     description: 'Where to restore and where to save. Can expand to bash variables and commands.'
