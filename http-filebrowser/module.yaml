@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 name: 'http-filebrowser'
 description: |
-  Upload from file to an HTTP server using curl.
+  Serve files using Filebrowser.
 minimumResources:
   tasks: 1
   cpusPerTask: 1
@@ -26,10 +26,19 @@ inputs:
   - key: ROOT
     description: 'Path to the files to be served.'
   - key: BORE_ADDRESS
-    description: 'Endpoint of the HTTP server.'
+    description: 'Bore Proxy used to exposed the server.'
     default: bore.deepsquare.run:2200
+  - key: NO_AUTH
+    description: 'Disable authentication'
+    default: 'false'
+  - key: USERNAME
+    description: 'Username for the login'
+    default: admin
+  - key: PASSWORD
+    description: 'Password for the login'
+    default: password
 steps:
-  - name: hello world
+  - name: filebrowser
     run:
       container:
         image: filebrowser/filebrowser:latest
@@ -40,7 +49,17 @@ steps:
             boreAddress: {{ if .Step.Use.Args }}{{ range .Step.Use.Args }}{{ if eq .Key "BORE_ADDRESS" }}{{ .Value }}{{ end }}{{ end }}{{ else }}bore.deepsquare.run:2200{{ end }}
       shell: /bin/sh
       command: |
+        set -- --root "$ROOT" \
+          -a 0.0.0.0 \
+          -p 8080 \
+          --database /tmp/filebrowser.db
         if [ -z "$ROOT" ]; then
           ROOT="$STORAGE_PATH"
         fi
-        /filebrowser --noauth --root $ROOT -a 0.0.0.0 -p 8080 --database $DEEPSQUARE_SHARED_TMP/filebrowser.db
+        if [ "$NO_AUTH" = "true" ] || [ "$USERNAME" = "" ]; then
+          set -- "$@" --noauth
+        else
+          set -- "$@" --username "$USERNAME"
+          set -- "$@" --password "$PASSWORD"
+        fi
+        /filebrowser "$@"
