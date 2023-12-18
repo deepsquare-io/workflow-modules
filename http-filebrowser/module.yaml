@@ -46,7 +46,8 @@ steps:
       customNetworkInterfaces:
         - bore:
             targetPort: 8080
-            boreAddress: {{ if .Step.Use.Args }}{{ range .Step.Use.Args }}{{ if eq .Key "BORE_ADDRESS" }}{{ .Value }}{{ end }}{{ end }}{{ else }}bore.deepsquare.run:2200{{ end }}
+            {{- $count := 0 }}
+            boreAddress: {{ if .Step.Use.Args }}{{ range .Step.Use.Args }}{{ if eq .Key "BORE_ADDRESS" }}{{- $count = add $count 1 -}}{{ .Value }}{{ end }}{{ end }}{{ end }}{{ if eq $count 0 }}bore.deepsquare.run:2200{{ end }}
       shell: /bin/sh
       command: |
         if [ -z "$ROOT" ]; then

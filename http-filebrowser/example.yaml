@@ -1,0 +1,17 @@
+enableLogging: true
+
+resources:
+  tasks: 1
+  gpus: 0
+  cpusPerTask: 1
+  memPerCpu: 1024
+
+steps:
+  - name: hello world
+    use:
+      source: github.com/deepsquare-io/workflow-modules/http-filebrowser
+      args:
+        - key: FB_USERNAME
+          value: admin
+        - key: FB_PASSWORD
+          value: password
