@@ -35,7 +35,7 @@ inputs:
     description: 'Username for the login'
     default: 'admin'
   - key: FB_PASSWORD
-    description: 'Password for the login'
+    description: 'BCrypt Hash of the password for the login (default: hash of "password")'
     default: '$2y$10$CYpikZv8Y5UJhhC7yQeNNeTiLm8vn10DNVvjq7.0yXE8t043BOEHu'
 steps:
   - name: filebrowser
