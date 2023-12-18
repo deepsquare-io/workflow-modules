@@ -31,10 +31,10 @@ inputs:
   - key: NO_AUTH
     description: 'Disable authentication'
     default: 'false'
-  - key: USERNAME
+  - key: FB_USERNAME
     description: 'Username for the login'
     default: admin
-  - key: PASSWORD
+  - key: FB_PASSWORD
     description: 'Password for the login'
     default: password
 steps:
@@ -56,10 +56,10 @@ steps:
         if [ -z "$ROOT" ]; then
           ROOT="$STORAGE_PATH"
         fi
-        if [ "$NO_AUTH" = "true" ] || [ "$USERNAME" = "" ]; then
+        if [ "$NO_AUTH" = "true" ] || [ "$FB_USERNAME" = "" ]; then
           set -- "$@" --noauth
         else
-          set -- "$@" --username "$USERNAME"
-          set -- "$@" --password "$PASSWORD"
+          set -- "$@" --username "$FB_USERNAME"
+          set -- "$@" --password "$FB_PASSWORD"
         fi
         /filebrowser "$@"
