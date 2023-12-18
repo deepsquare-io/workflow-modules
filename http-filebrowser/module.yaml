@@ -33,7 +33,7 @@ inputs:
     default: 'false'
   - key: FB_USERNAME
     description: 'Username for the login'
-    default: admin
+    default: q
   - key: FB_PASSWORD
     description: 'Password for the login'
     default: password
@@ -49,13 +49,13 @@ steps:
             boreAddress: {{ if .Step.Use.Args }}{{ range .Step.Use.Args }}{{ if eq .Key "BORE_ADDRESS" }}{{ .Value }}{{ end }}{{ end }}{{ else }}bore.deepsquare.run:2200{{ end }}
       shell: /bin/sh
       command: |
+        if [ -z "$ROOT" ]; then
+          ROOT="$STORAGE_PATH"
+        fi
         set -- --root "$ROOT" \
           -a 0.0.0.0 \
           -p 8080 \
           --database /tmp/filebrowser.db
-        if [ -z "$ROOT" ]; then
-          ROOT="$STORAGE_PATH"
-        fi
         if [ "$NO_AUTH" = "true" ] || [ "$FB_USERNAME" = "" ]; then
           set -- "$@" --noauth
         else
