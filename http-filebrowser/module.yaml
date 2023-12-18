@@ -1,0 +1,46 @@
+# Permits to run upload files to the web.
+#
+# Copyright (C) 2023 DeepSquare Association
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+name: 'http-filebrowser'
+description: |
+  Upload from file to an HTTP server using curl.
+minimumResources:
+  tasks: 1
+  cpusPerTask: 1
+  memPerCpu: 10
+  gpus: 0
+inputs:
+  - key: ROOT
+    description: 'Path to the files to be served.'
+  - key: BORE_ADDRESS
+    description: 'Endpoint of the HTTP server.'
+    default: bore.deepsquare.run:2200
+steps:
+  - name: hello world
+    run:
+      container:
+        image: filebrowser/filebrowser:latest
+      network: slirp4netns
+      customNetworkInterfaces:
+        - bore:
+            targetPort: 8080
+            boreAddress: {{ if .Step.Use.Args }}{{ range .Step.Use.Args }}{{ if eq .Key "BORE_ADDRESS" }}{{ .Value }}{{ end }}{{ end }}{{ else }}bore.deepsquare.run:2200{{ end }}
+      shell: /bin/sh
+      command: |
+        if [ -z "$ROOT" ]; then
+          ROOT="$STORAGE_PATH"
+        fi
+        /filebrowser --noauth --root $ROOT -a 0.0.0.0 -p 8080 --database $DEEPSQUARE_SHARED_TMP/filebrowser.db
