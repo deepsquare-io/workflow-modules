@@ -14,4 +14,5 @@ steps:
         - key: FB_USERNAME
           value: admin
         - key: FB_PASSWORD
-          value: password
+          # bcrypt hash of "password"
+          value: $2y$10$CYpikZv8Y5UJhhC7yQeNNeTiLm8vn10DNVvjq7.0yXE8t043BOEHu
