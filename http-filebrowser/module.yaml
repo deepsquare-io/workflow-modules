@@ -33,10 +33,10 @@ inputs:
     default: 'false'
   - key: FB_USERNAME
     description: 'Username for the login'
-    default: ''
+    default: 'admin'
   - key: FB_PASSWORD
     description: 'Password for the login'
-    default: ''
+    default: '$2y$10$CYpikZv8Y5UJhhC7yQeNNeTiLm8vn10DNVvjq7.0yXE8t043BOEHu'
 steps:
   - name: filebrowser
     run:
