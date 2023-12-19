@@ -4,7 +4,9 @@ resources:
   gpus: 0
   cpusPerTask: 1
   memPerCpu: 512
+
 enableLogging: true
+
 steps:
   - name: create file
     run:

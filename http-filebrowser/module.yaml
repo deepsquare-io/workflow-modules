@@ -24,7 +24,7 @@ minimumResources:
   gpus: 0
 inputs:
   - key: ROOT
-    description: 'Path to the files to be served.'
+    description: 'Path to the files to be served. Environment variables and shell functions like ${STORAGE_PATH} or $(pwd) can expand here.'
   - key: BORE_ADDRESS
     description: 'Bore Proxy used to exposed the server.'
     default: bore.deepsquare.run:2200
@@ -52,6 +52,8 @@ steps:
       command: |
         if [ -z "$ROOT" ]; then
           ROOT="$STORAGE_PATH"
+        else
+          ROOT="$(eval "echo \"$ROOT\"")"
         fi
         set -- --root "$ROOT" \
           -a 0.0.0.0 \
