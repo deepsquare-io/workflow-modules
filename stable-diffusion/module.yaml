@@ -1,0 +1,105 @@
+name: 'stable-diffusion'
+minimumResources:
+  tasks: {{ .Job.Resources.Tasks }}
+  cpusPerTask: 1
+  memPerCpu: 1000
+  gpus: {{ .Job.Resources.Tasks }}
+inputs:
+  - key: STEPS
+    description: Number of processing steps.
+    default: '50'
+  - key: HEIGHT
+    default: '768'
+  - key: WIDTH
+    default: '768'
+  - key: MODEL
+    description: Available ML models (sd-2-1, wd-1-4)
+    default: 'sd-2-1'
+  - key: ITER
+    description: Number of rows.
+    default: '1'
+  - key: SAMPLES
+    description: Number of columns. Depends on the VRAM.
+    default: '3'
+  - key: PROMPT
+    default: 'an astronaut in space'
+steps:
+  - name: generation-loop
+    for:
+      parallel: true
+      range:
+        begin: 1
+        end: {{ .Job.Resources.Tasks }}
+      steps:
+        - name: generate image
+          run:
+            container:
+              deepsquareHosted: true
+              apptainer: true
+              registry: 'registry-1.deepsquare.run'
+              image: 'library/stable-diffusion:latest'
+            resources:
+              gpusPerTask: 1
+            mounts:
+              - hostDir: '/opt/models/stable-diffusion'
+                containerDir: '/models'
+                options: 'ro'
+            env:
+              - key: HF_HOME
+                value: /cache
+            shell: '/bin/bash'
+            command: |
+              set -e
+
+              ln -s $DEEPSQUARE_SHARED_TMP /cache
+
+              mkdir -p "${STORAGE_PATH}/batch-${index}"
+              params=(
+                "--ckpt" "/models/$MODEL/model.ckpt"
+                "--outdir" "${STORAGE_PATH}/batch-${index}"
+                "--H" "$HEIGHT"
+                "--W" "$WIDTH"
+                "--steps" "$STEPS"
+                "--n_iter" "$ITER"
+                "--device" "cuda"
+                "--n_samples" "$SAMPLES"
+                "--seed" "$(od -N 4 -t uL -An /dev/urandom | tr -d " ")"
+                "--prompt" "$PROMPT"
+              )
+              if [ -f "/models/$MODEL/config.yaml" ]; then
+                params+=("--config" "/models/$MODEL/config.yaml")
+              fi
+
+              python /stablediffusion/scripts/txt2img.py "${params[@]}"
+              cd "${STORAGE_PATH}/batch-${index}"
+              find . -type f -not -name "grid*.png" -exec sh -c 'i="$1"; mv "$i" "$(md5sum "$i" | cut -d " " -f 1 | cut -c -12).png"' shell "{}" \\;
+              mv grid*.png "grid_${index}.png"
+  - name: combine-images
+    run:
+      container:
+        deepsquareHosted: true
+        apptainer: true
+        registry: 'registry-1.deepsquare.run'
+        image: 'library/stable-diffusion:latest'
+      shell: '/bin/bash'
+      command: |
+        set -e
+
+        cd "${STORAGE_PATH}"
+        mv $(find . -maxdepth 2 -type f | grep ".png") "$DEEPSQUARE_OUTPUT"
+        cd "$DEEPSQUARE_OUTPUT"
+        convert -append grid*.png ./results_grid.png
+        rm grid*.png
+        echo "${PROMPT}" > input.txt
+        echo "##############################################################"
+        echo
+        echo "Input:"
+        echo "${PROMPT}"
+        echo
+        echo "Click on this link to preview your results:"
+        curl -sS --upload-file "./results_grid.png" https://transfer.deepsquare.run/
+        echo
+        echo
+        echo "##############################################################"
+
+        chmod -R 777 /cache/* 2>/dev/null || true
