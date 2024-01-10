@@ -1,9 +1,9 @@
 name: 'stable-diffusion'
 minimumResources:
-  tasks: {{ .Job.Resources.Tasks }}
+  tasks: { { .Job.Resources.Tasks } }
   cpusPerTask: 1
   memPerCpu: 1000
-  gpus: {{ .Job.Resources.Tasks }}
+  gpus: { { .Job.Resources.Tasks } }
 inputs:
   - key: STEPS
     description: Number of processing steps.
@@ -29,7 +29,7 @@ steps:
       parallel: true
       range:
         begin: 1
-        end: {{ .Job.Resources.Tasks }}
+        end: { { .Job.Resources.Tasks } }
       steps:
         - name: generate image
           run:
@@ -50,6 +50,8 @@ steps:
             shell: '/bin/bash'
             command: |
               set -e
+
+              cd "${STORAGE_PATH}"
 
               ln -s $DEEPSQUARE_SHARED_TMP /cache
 
