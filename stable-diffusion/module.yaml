@@ -5,6 +5,9 @@ minimumResources:
   memPerCpu: 1000
   gpus: {{ .Job.Resources.Tasks }}
 inputs:
+  - key: OUTPUT
+    description: Output HTTP server
+    default: 'https://transfer.deepsquare.run/'
   - key: STEPS
     description: Number of processing steps.
     default: '50'
@@ -99,7 +102,7 @@ steps:
         echo "${PROMPT}"
         echo
         echo "Click on this link to preview your results:"
-        curl -sS --upload-file "./results_grid.png" https://transfer.deepsquare.run/
+        curl -sS --upload-file "./results_grid.png" "$OUTPUT"
         echo
         echo
         echo "##############################################################"
