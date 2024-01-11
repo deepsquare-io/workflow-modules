@@ -41,12 +41,12 @@ steps:
               apptainer: true
               registry: 'registry-1.deepsquare.run'
               image: 'library/stable-diffusion:latest'
+              mounts:
+                - hostDir: '/opt/models/stable-diffusion'
+                  containerDir: '/models'
+                  options: 'ro'
             resources:
               gpusPerTask: 1
-            mounts:
-              - hostDir: '/opt/models/stable-diffusion'
-                containerDir: '/models'
-                options: 'ro'
             shell: '/bin/bash'
             command: |
               set -e
