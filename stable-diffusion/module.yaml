@@ -47,16 +47,11 @@ steps:
               - hostDir: '/opt/models/stable-diffusion'
                 containerDir: '/models'
                 options: 'ro'
-            env:
-              - key: HF_HOME
-                value: /cache
             shell: '/bin/bash'
             command: |
               set -e
 
-              cd "${STORAGE_PATH}"
-
-              ln -s $DEEPSQUARE_SHARED_TMP /cache
+              export HF_HOME="${DEEPSQUARE_SHARED_TMP}"
 
               mkdir -p "${STORAGE_PATH}/batch-${index}"
               params=(
