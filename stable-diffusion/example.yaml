@@ -1,0 +1,16 @@
+---
+resources:
+  tasks: 2
+  gpus: 2
+  cpusPerTask: 1
+  memPerCpu: 32000
+
+enableLogging: true
+
+steps:
+  - name: stable-diffusion
+    use:
+      source: github.com/deepsquare-io/workflow-modules/stable-diffusion
+      args:
+        - key: PROMPT
+          value: flying bird
