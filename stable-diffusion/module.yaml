@@ -2,7 +2,7 @@ name: 'stable-diffusion'
 minimumResources:
   tasks: {{ .Job.Resources.Tasks }}
   cpusPerTask: 1
-  memPerCpu: 1000
+  memPerCpu: 4000
   gpus: {{ .Job.Resources.Tasks }}
 inputs:
   - key: OUTPUT
@@ -72,7 +72,7 @@ steps:
 
               python /stablediffusion/scripts/txt2img.py "${params[@]}"
               cd "${STORAGE_PATH}/batch-${index}"
-              find . -type f -not -name "grid*.png" -exec sh -c 'i="$1"; mv "$i" "$(md5sum "$i" | cut -d " " -f 1 | cut -c -12).png"' shell "{}" \\;
+              find . -type f -not -name "grid*.png" -exec sh -c 'i="$1"; mv "$i" "$(md5sum "$i" | cut -d " " -f 1 | cut -c -12).png"' shell "{}" \;
               mv grid*.png "grid_${index}.png"
   - name: combine-images
     run:
