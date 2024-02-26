@@ -58,7 +58,8 @@ steps:
         set -- --root "$ROOT" \
           -a 0.0.0.0 \
           -p 8080 \
-          --database /tmp/filebrowser.db
+          --database /tmp/filebrowser.db \
+          --disable-preview-resize
         if [ "$NO_AUTH" = "true" ] || [ "$FB_USERNAME" = "" ]; then
           set -- "$@" --noauth
         else
